@@ -8,7 +8,7 @@ import {
 import { Button } from './ui/button'
 const Topbar = () => {
   return (
-    <div className='w-full bg-white flex justify-between items-center p-[1%] rounded-lg'>
+    <div className='w-full bg-white flex justify-between items-center p-[2%] lg:p-[1%] rounded-lg'>
         <div className='flex  justify-center items-center gap-3'>
             <div className='w-[35px] h-[35px] flex  justify-center items-center bg-gray-200 rounded-sm '>
             <MousePointer2 />
@@ -17,7 +17,7 @@ const Topbar = () => {
         </div>
         <div className='flex  justify-center items-center gap-6'>
 
-        <Button className='rounded-full'>
+        <Button className='rounded-full bg-blue-500'>
         <Download /> Export
         </Button>
         <Settings/>
