@@ -1,7 +1,7 @@
 'use client';
 
 import { RootState } from '@/app/store';
-import { setScenes, setThumbnail, setVideoFile } from '@/app/store/videoSlice';
+import { setScenes, setVideoFile } from '@/app/store/videoSlice';
 import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,124 +9,181 @@ import Cloud from '../public/cloud.png';
 import Drop from '../public/download.png';
 import Image from 'next/image';
 import { v4 as uuidv4 } from 'uuid';
+import { cn } from '@/lib/utils';
 
-export default function VideoUploader() {
+interface Size {
+  width: number;
+  height: number;
+}
+
+interface Position {
+  x: number;
+  y: number;
+}
+
+interface VideoUploaderProps {
+  size: Size;
+  setSize: (size: Size) => void;
+  position: Position;
+  setPosition: (position: Position) => void;
+  dragging: boolean;
+  handleDragStart: (e: React.MouseEvent<HTMLDivElement>) => void;
+  handleDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
+  handleDragEnd: () => void;
+  containerRef: React.RefObject<HTMLDivElement | null>; 
+}
+
+export default function VideoUploader({
+  size,
+  position,
+  dragging,
+  handleDragStart,
+  handleDrag,
+  handleDragEnd,
+  containerRef
+}: VideoUploaderProps) {
   const dispatch = useDispatch();
-  const fileUrl = useSelector((state: RootState) => state.video.fileUrl);
-  const thumbnail = useSelector((state: RootState) => state.video.thumbnail);
-  
+  const { fileUrl, thumbnail, overlayImage } = useSelector((state: RootState) => state.video);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [currentUrl, setCurrentUrl] = useState<string | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
-      setLoading(true);
+      if (currentUrl) {
+        URL.revokeObjectURL(currentUrl);
+      }
+
       const url = URL.createObjectURL(file);
+      setCurrentUrl(url);
+      setLoading(true);
+      setProgress(0);
       dispatch(setVideoFile({ url, name: file.name }));
-  
+
       const video = document.createElement('video');
       video.src = url;
       video.crossOrigin = 'anonymous';
-  
-      video.addEventListener('loadedmetadata', () => {
-        const duration = video.duration; // get video length
-        const captureTimes = [0, duration * 0.25, duration * 0.5, duration * 0.75]; // 4 thumbnails: start, 25%, 50%, 75%
-  
-        const scenesPromises = captureTimes.map((time) => {
-          return new Promise<string>((resolve) => {
+
+      video.addEventListener('loadedmetadata', async () => {
+        const duration = video.duration;
+        const captureTimes = [0, duration * 0.25, duration * 0.5, duration * 0.75];
+      
+        const thumbnails: string[] = [];
+      
+        for (let i = 0; i < captureTimes.length; i++) {
+          const time = captureTimes[i];
+      
+          await new Promise<void>((resolve) => {
+            const seekHandler = () => {
+              const canvas = document.createElement('canvas');
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+              const ctx = canvas.getContext('2d');
+              if (ctx) {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const dataUrl = canvas.toDataURL('image/jpeg');
+                thumbnails.push(dataUrl);
+                setProgress(((i + 1) / captureTimes.length) * 100);
+              }
+              video.removeEventListener('seeked', seekHandler);
+              resolve();
+            };
+      
+            video.addEventListener('seeked', seekHandler);
             video.currentTime = time;
-            video.addEventListener(
-              'seeked',
-              () => {
-                const canvas = document.createElement('canvas');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const ctx = canvas.getContext('2d');
-                if (ctx) {
-                  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                  const dataUrl = canvas.toDataURL('image/jpeg');
-                  resolve(dataUrl);
-                }
-              },
-              { once: true } // only trigger once
-            );
           });
-        });
-  
-        Promise.all(scenesPromises).then((thumbnails) => {
-          const sceneObjects = thumbnails.map((thumb) => ({
-            id: uuidv4(),
-            thumbnail: thumb,
-          }));
-          dispatch(setScenes(sceneObjects));
-          setLoading(false);
-        });
+        }
+      
+        const sceneObjects = thumbnails.map((thumb) => ({
+          id: uuidv4(),
+          thumbnail: thumb,
+        }));
+      
+        dispatch(setScenes(sceneObjects));
+        setLoading(false);
       });
+      
     }
-  }, [dispatch]);
-  
+  }, [dispatch, currentUrl]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   useEffect(() => {
-    if (loading) {
-      const interval = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setLoading(false); 
-            return 100;
-          }
-          return prev + 5; 
-        });
-      }, 100);
-
-      return () => clearInterval(interval);
-    }
-  }, [loading]);
+    return () => {
+      if (currentUrl) {
+        URL.revokeObjectURL(currentUrl);
+      }
+    };
+  }, [currentUrl]);
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">
       {/* Progress bar */}
       {loading && (
-        <div className="w-1/2 h-2 bg-gray-300 rounded-full overflow-hidden">
+        <div className="w-1/2 h-2 bg-gray-300 rounded-full overflow-hidden mb-4">
           <div
-            className="h-full bg-blue-500 transition-all duration-100"
+            className="h-full bg-blue-500 transition-all duration-300"
             style={{ width: `${progress}%` }}
           ></div>
         </div>
       )}
 
-      {/* Show uploader if there's no fileUrl and not loading */}
+      {/* Uploader */}
       {!fileUrl && !loading && (
-        <div {...getRootProps()}>
+        <div {...getRootProps()} className="w-full flex flex-col justify-center items-center gap-1 cursor-pointer">
           <input {...getInputProps()} />
           {isDragActive ? (
-            <div className="w-full flex flex-col justify-center items-center gap-1">
+            <>
               <h1>Drop the video file here to upload</h1>
-              <Image src={Drop} alt="cloud" width={70} height={70} className="mx-auto" />
-            </div>
+              <Image src={Drop} alt="drop" width={70} height={70} className="mx-auto" />
+            </>
           ) : (
-            <div className="w-full flex flex-col justify-center items-center gap-1 cursor-pointer">
+            <>
               <Image src={Cloud} alt="cloud" width={70} height={70} className="mx-auto" />
               <h1 className="underline font-semibold">Click to Upload</h1>
               <h1 className="text-gray-500">or drag and drop files here</h1>
-            </div>
+            </>
           )}
         </div>
       )}
 
-      {/* Show video if uploaded and loading is done */}
+      {/* Video Player */}
       {fileUrl && !loading && (
-        <div className="w-full h-full flex justify-center items-center p-2">
+        <div  
+        ref={containerRef}
+        onMouseMove={handleDrag}
+        onMouseUp={handleDragEnd}
+        onMouseLeave={handleDragEnd} className="relative w-full h-full flex justify-center items-center p-2">
           <video
             src={fileUrl}
             controls
             poster={thumbnail || undefined}
-            className="w-full  rounded-xl object-contain"
+            className="w-full rounded-xl object-contain"
             style={{ height: '100%', width: '100%' }}
           />
+          
+          {/* Draggable Overlay */}
+          {overlayImage && (
+            <div
+              className={cn(
+                "absolute cursor-move transition-all border border-blue-400",
+                dragging && "opacity-80"
+              )}
+              onMouseDown={handleDragStart}
+              style={{
+                top: position.y,
+                left: position.x,
+                width: size.width,
+                height: size.height,
+                backgroundImage: `url(${overlayImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                borderRadius: '8px',
+                opacity: 0.9,
+              }}
+            />
+          )}
         </div>
       )}
     </div>

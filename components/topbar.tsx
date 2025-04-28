@@ -10,7 +10,7 @@ const Topbar = () => {
   return (
     <div className='w-full bg-white flex justify-between items-center p-[2%] lg:p-[1%] rounded-lg'>
         <div className='flex  justify-center items-center gap-3'>
-            <div className='w-[35px] h-[35px] flex  justify-center items-center bg-gray-200 rounded-sm '>
+            <div className='w-[35px] h-[35px] flex  justify-center items-center bg-muted rounded-sm '>
             <MousePointer2 />
             </div>
         <Hand />

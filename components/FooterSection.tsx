@@ -14,7 +14,7 @@ export type IconProps = React.HTMLAttributes<SVGElement>;
 export function FooterSection() {
   return (
  <div className="w-full">
-     <div className="relative w-full  flex justify-between items-center px-1 ">
+     <div className="relative w-full  flex justify-between items-center px-4 ">
       <Dock iconMagnification={60} iconDistance={100}>
         <DockIcon className="bg-black/10 dark:bg-white/10">
         <Scissors  />

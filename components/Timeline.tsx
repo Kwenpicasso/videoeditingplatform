@@ -3,10 +3,10 @@
 import { RootState } from '@/app/store';
 import { setScenes } from '@/app/store/videoSlice';
 import { useSelector, useDispatch } from 'react-redux';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { DndContext, closestCenter, useDraggable, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { v4 as uuidv4 } from 'uuid'; // install uuid package
+import { v4 as uuidv4 } from 'uuid'; 
 
 export default function Timeline() {
   const scenes = useSelector((state: RootState) => state.video.scenes);
@@ -34,22 +34,19 @@ export default function Timeline() {
     }
   }
 
-  function handleAddScene() {
-    const newScene = {
-      id: uuidv4(),
-      thumbnail: `https://via.placeholder.com/150?text=Scene+${scenes.length + 1}`,
-    };
-    dispatch(setScenes([...scenes, newScene]));
-  }
 
   return (
     <div className="w-full p-4  rounded-md space-y-4">
       <div className="w-full overflow-x-auto flex items-center gap-2">
       {fileUrl ? (
           <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          {scenes.map((scene) => (
-            <SceneBlock key={scene.id} id={scene.id} thumbnail={scene.thumbnail} />
-          ))}
+         {scenes.map((scene, index) => (
+  <div key={scene.id} className="flex flex-col items-center">
+    <SceneBlock id={scene.id} thumbnail={scene.thumbnail} />
+    <span className="text-xs text-gray-500 mt-1">{`00:${String(index * 5).padStart(2, '0')}`}</span>
+  </div>
+))}
+
         </DndContext>
       ) : (
        <div className="w-full flex flex-col justify-center items-center gap-2">

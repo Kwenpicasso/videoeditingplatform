@@ -5,6 +5,7 @@ interface VideoState {
   fileName: string | null;
   thumbnail: string | null;
   scenes: any[];
+  overlayImage: string | null; 
 }
 
 const initialState: VideoState = {
@@ -12,6 +13,7 @@ const initialState: VideoState = {
   fileName: null,
   thumbnail: null,
   scenes: [],
+  overlayImage: null,
 };
 
 export const videoSlice = createSlice({
@@ -28,8 +30,12 @@ export const videoSlice = createSlice({
     setScenes(state, action: PayloadAction<any[]>) {
       state.scenes = action.payload;
     },
+    setOverlayImage(state, action: PayloadAction<string | null>) {
+      state.overlayImage = action.payload;
+    },
+    
   },
 });
 
-export const { setVideoFile, setThumbnail, setScenes } = videoSlice.actions;
+export const { setVideoFile, setThumbnail, setScenes , setOverlayImage} = videoSlice.actions;
 export default videoSlice.reducer;

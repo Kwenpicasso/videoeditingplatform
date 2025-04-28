@@ -58,7 +58,7 @@ const Sidenav: React.FC<SidenavProps> = ({ onSelect,selected }) => {
 <div
             key={index}
             onClick={() => onSelect(item.label)}
-            className={`cursor-pointer flex flex-col w-[100%]  p-2 mx-auto justify-center items-center hover:bg-gray-100 rounded-lg ${item.label == selected ? 'bg-gray-100' : 'bg-transparent'}`}
+            className={`cursor-pointer flex flex-col w-[100%]  p-2 mx-auto justify-center items-center text-blue-500 hover:bg-gray-100 rounded-lg ${item.label == selected ? 'bg-gray-100' : 'bg-transparent'}`}
           >
             {item.icon}
             <h1 className='text-sm'>{item.label}</h1>
