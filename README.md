@@ -1,33 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Video Editing Platform – Frontend (UI)
+A web-based frontend for a browser-based video editing platform built with Next.js, React, Tailwind CSS, and Redux Toolkit. This project simulates core features like video upload, timeline editing, subtitles, overlays, and exporting functionalities — with a strong focus on user experience and modular architecture.
 
-## Getting Started
+🚀 Features
+✅ Drag-and-drop video upload with preview
 
-First, run the development server:
+✅ Timeline scene management with drag-and-drop
+
+✅ Static audio waveform and background music input
+
+✅ Subtitle and text overlay configuration
+
+✅ Draggable/resizable image overlays
+
+✅ Real-time video preview and simulated render/export
+
+🛠 Tech Stack
+Next.js (App Router)
+
+React.js
+
+Tailwind CSS
+
+ShadCN UI
+
+Redux Toolkit
+
+React DnD
+
+React Dropzone
+
+HTML5 <video> 
+
+Framer motion
+
+🧑‍💻 Getting Started
+
+```bash
+git clone https://github.com/Kwenpicasso/videoeditingplatform
+cd videoeditor
+```
+ Install Dependencies
+
+```bash
+npm install
+# or
+yarn install
+```
+  Start the Dev Server
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
-
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel
 
