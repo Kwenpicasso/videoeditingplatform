@@ -133,8 +133,8 @@ const AudioModifier = () => {
         </div>
      </TabsContent>
 
-        <TabsContent value="music">Music tab content</TabsContent>
-        <TabsContent value="sound">Sound Effect tab content</TabsContent>
+        <TabsContent value="music" className='w-full flex h-full justify-center items-center text-center'>No music currently</TabsContent>
+       
       </Tabs>
     </div>
   )
