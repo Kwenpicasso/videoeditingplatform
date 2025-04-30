@@ -67,7 +67,7 @@ const AudioModifier = () => {
      <TabsContent  value="all">
      <div
  
-  className="overflow-y-auto h-[500px] w-full hide-scrollbar  pb-6"
+  className="overflow-y-auto h-full w-full hide-scrollbar  pb-6"
 >
 
           <div className="w-full relative mb-4 ">

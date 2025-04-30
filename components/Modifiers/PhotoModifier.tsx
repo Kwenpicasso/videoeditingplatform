@@ -52,7 +52,7 @@ const PhotoModifier: React.FC<PhotoModifierProps> = ({
   }
 
   return (
-  <div className='w-full'>
+  <div className='w-full '>
   {fileUrl ? (
   <div className="space-y-4 w-full overflow-y-scroll h-[500px] hide-scrollbar">
   <h2 className="text-lg font-bold">Image Overlay Modifier</h2>

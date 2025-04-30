@@ -35,6 +35,7 @@ const defaultSubtitle: Subtitle = {
 const SubTitleModifier = () => {
   const [subtitles, setSubtitles] = useState<Subtitle[]>([])
   const [currentSubtitle, setCurrentSubtitle] = useState<Subtitle>({ ...defaultSubtitle })
+  console.log(subtitles)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -67,7 +68,7 @@ const SubTitleModifier = () => {
   }
 
   return (
-    <div className="p-2 space-y-4 w-full overflow-y-scroll h-[500px] hide-scrollbar">
+    <div className="p-2 space-y-4 w-full overflow-y-scroll h-[500px]  hide-scrollbar">
       <h2 className="text-lg font-semibold">Add Subtitle</h2>
 
       <Input
@@ -146,25 +147,27 @@ const SubTitleModifier = () => {
         Add Subtitle
       </Button>
 
-      <div className="mt-6 space-y-2">
-        <h3 className="font-semibold">Subtitle Blocks:</h3>
-        {subtitles.map(sub => (
-          <div
-            key={sub.id}
-            className="p-2 border rounded shadow-sm"
-            style={{
-              fontFamily: sub.font,
-              fontSize: `${sub.size}px`,
-              color: sub.color,
-              textAlign: 'center',
-            }}
-          >
-            <div>Text: {sub.text}</div>
-            <div>Timing: {sub.startTime} - {sub.endTime}</div>
-            <div>Position: {sub.position}</div>
-          </div>
-        ))}
-      </div>
+     {subtitles.length > 0 && (
+       <div className="mt-6 space-y-2">
+       <h3 className="font-semibold">Subtitle Blocks:</h3>
+       {subtitles.map(sub => (
+         <div
+           key={sub.id}
+           className="p-2 border rounded shadow-sm"
+           style={{
+             fontFamily: sub.font,
+             fontSize: `${sub.size}px`,
+             color: sub.color,
+             textAlign: 'center',
+           }}
+         >
+           <div>Text: {sub.text}</div>
+           <div>Timing: {sub.startTime} - {sub.endTime}</div>
+           <div>Position: {sub.position}</div>
+         </div>
+       ))}
+     </div>
+     )}
     </div>
   )
 }

@@ -31,6 +31,7 @@ interface VideoUploaderProps {
   handleDrag: (e: React.MouseEvent<HTMLDivElement>) => void;
   handleDragEnd: () => void;
   containerRef: React.RefObject<HTMLDivElement | null>; 
+  selectedText: string  | null
 }
 
 export default function VideoUploader({
@@ -40,14 +41,36 @@ export default function VideoUploader({
   handleDragStart,
   handleDrag,
   handleDragEnd,
-  containerRef
+  containerRef,
+  selectedText
 }: VideoUploaderProps) {
   const dispatch = useDispatch();
   const { fileUrl, thumbnail, overlayImage } = useSelector((state: RootState) => state.video);
+  const [inputPosition, setInputPosition] = useState<Position>({ x: 50, y: 50 });
+const [draggingInput, setDraggingInput] = useState(false);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [inputSubmitted, setInputSubmitted] = useState(false);
   const [currentUrl, setCurrentUrl] = useState<string | null>(null);
-
+  const handleInputDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
+    setDraggingInput(true);
+    e.stopPropagation();
+  };
+  
+  const handleInputDrag = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!draggingInput) return;
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+  
+    const newX = e.clientX - rect.left;
+    const newY = e.clientY - rect.top;
+    setInputPosition({ x: newX, y: newY });
+  };
+  
+  const handleInputDragEnd = () => {
+    setDraggingInput(false);
+  };
+  
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
@@ -152,9 +175,18 @@ export default function VideoUploader({
       {fileUrl && !loading && (
         <div  
         ref={containerRef}
-        onMouseMove={handleDrag}
-        onMouseUp={handleDragEnd}
-        onMouseLeave={handleDragEnd} className="relative w-full h-full flex justify-center items-center p-2">
+  onMouseMove={(e) => {
+    handleDrag(e);
+    handleInputDrag(e);
+  }}
+  onMouseUp={() => {
+    handleDragEnd();
+    handleInputDragEnd();
+  }}
+  onMouseLeave={() => {
+    handleDragEnd();
+    handleInputDragEnd();
+  }} className="relative w-full h-full flex justify-center items-center p-2">
           <video
             src={fileUrl}
             controls
@@ -162,7 +194,33 @@ export default function VideoUploader({
             className="w-full rounded-xl object-contain"
             style={{ height: '100%', width: '100%' }}
           />
-          
+          {selectedText && (
+  <div
+    className="absolute z-20 cursor-move"
+    onMouseDown={handleInputDragStart}
+    style={{
+      top: inputPosition.y,
+      left: inputPosition.x,
+      position: 'absolute',
+    }}
+  >
+    <input
+  type="text"
+  defaultValue={selectedText}
+  onKeyDown={(e) => {
+    if (e.key === 'Enter') {
+      setInputSubmitted(true);
+    }
+  }}
+  className={cn(
+    "p-1 rounded text-white",
+    inputSubmitted ? "border-transparent" : "border border-gray-400"
+  )}
+/>
+
+  </div>
+)}
+
           {/* Draggable Overlay */}
           {overlayImage && (
             <div

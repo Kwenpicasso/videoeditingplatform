@@ -6,13 +6,15 @@ import Topbar from '@/components/topbar';
 import useWindowSize from '@/hooks/useWindowSize';
 import {  FooterSection } from '@/components/FooterSection';
 import VideoUploader from '@/components/videoUploader';
+import MobileSidenav from '@/components/MobileSidenav';
 
 export default function Home() {
   const { width } = useWindowSize();
-  const [selectedNav, setSelectedNav] = useState('Media');
+  const [selectedNav, setSelectedNav] = useState('Preview');
   const [position, setPosition] = useState({ x: 50, y: 50 })
   const [size, setSize] = useState({ width: 150, height: 150 })
   const [dragging, setDragging] = useState(false)
+  const [selectedText, setSelectedText] = useState<string | null>(null);
   const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
     setDragging(true)
   }
@@ -33,26 +35,27 @@ export default function Home() {
   }
   return (
     <div className="w-full bg-gray-300 h-[100dvh] flex gap-0.5 p-1.5">
-      {width !== undefined && width > 1024 ? (
+      {width !== undefined && width > 1024 && (
         <Sidenav onSelect={setSelectedNav}  selected={selectedNav}/>
-      ) : (
-        <div className='absolute w-[98%] right-0 left-0 mx-auto bg-red-100 bottom-2 h-[60px] rounded-full '>dnd</div>
       )}
 
-      <div className="w-full lg:w-[94%] flex flex-col gap-1">
+      <div className="w-full lg:w-[94%] flex flex-col gap-1  h-full">
         <Topbar />
+        {width !== undefined && width < 1024 && (
+           <MobileSidenav onSelect={setSelectedNav}  selected={selectedNav}/>
+        )}
         <div className="w-full flex flex-col h-full gap-1">
-          <div className="w-full h-[65dvh] flex gap-1">
-            <div className="w-[20%] bg-white border  rounded-lg  overflow-hidden  ">
+          <div className="w-full   h-full flex gap-1 flex-col lg:flex-row ">
+            <div className="w-full lg:w-[20%] lg:h-full hide-scrollbar overflow-y-auto  bg-white h-full  lg:justify-start lg:items-start border  rounded-lg  overflow-hidden  ">
               <Modifier 
               selected={selectedNav}
                 size={size}
                 setSize={setSize}
-               
+                onSelectText={setSelectedText}
                 
               />
             </div>
-            <div className="w-[80%] bg-white rounded-lg ">
+            <div className="w-full lg:w-[80%] h-full bg-white rounded-lg ">
               <VideoUploader 
               position={position}
               setPosition={setPosition}
@@ -63,6 +66,7 @@ export default function Home() {
               handleDrag={handleDrag}
               handleDragEnd={handleDragEnd}
               containerRef={containerRef}
+              selectedText={selectedText}
 
               />
             </div>

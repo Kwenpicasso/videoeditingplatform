@@ -16,20 +16,20 @@ interface ModifierProps {
   selected: string;
   size: Size;
   setSize: Dispatch<SetStateAction<Size>>;
+  onSelectText: (text: string) => void 
 }
 
 
 const Modifier: React.FC<ModifierProps> = ({
   selected,
   size,
-  setSize
+  setSize,
+  onSelectText
 
 }) => {
   const renderComponent = () => {
     switch (selected) {
-      case 'Media':
-        return <MediaModifier />;
-      case 'Video':
+      case 'Preview':
         return <VideoModifier />;
       case 'Photo':
         return (
@@ -42,17 +42,17 @@ const Modifier: React.FC<ModifierProps> = ({
       case 'Audio':
         return <AudioModifier />;
       case 'Text':
-        return <TextModifier />;
+        return <TextModifier
+        onSelectText={onSelectText}
+        />;
       case 'Subtitles':
         return <SubTitleModifier />;
-      case 'Effect':
-        return <EffectModifier />;
       default:
         return <div className="text-white">Please select an item from the sidebar.</div>;
     }
   };
 
-  return <div className="p-2 h-full flex justify-center items-center  text-center flex-col w-full">{renderComponent()}</div>;
+  return <div className={`p-2  flex ${selected == 'Subtitles' && 'justify-start items-start'} ${selected == 'Photo' && 'justify-center items-center'}   text-center flex-col w-full`}>{renderComponent()}</div>;
 };
 
 export default Modifier;

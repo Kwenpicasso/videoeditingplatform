@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased max-w-[2500px] mx-auto overflow-x-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased max-w-[2500px] mx-auto overflow-x-hidden `}
       >
          <ReduxProvider>
     {children}

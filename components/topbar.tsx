@@ -20,8 +20,8 @@ const Topbar = () => {
         <Button className='rounded-full bg-blue-500'>
         <Download /> Export
         </Button>
-        <Settings/>
-        <CircleAlert />
+        <Settings className='hidden lg:flex'/>
+        <CircleAlert  className='hidden lg:flex'/>
        
         <Avatar className='w-10 h-10'>
       <AvatarImage  src="https://res.cloudinary.com/dequoncot/image/upload/v1740402935/Image_aqsk68.png" alt="img" />

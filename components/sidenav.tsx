@@ -16,13 +16,11 @@ interface NavItem {
 }
 
 const sidenavItems: NavItem[] = [
-  { icon: <CloudUpload />, label: 'Media' },
-  { icon: <Film />, label: 'Video' },
+  { icon: <Film />, label: 'Preview' },
   { icon: <Image />, label: 'Photo' },
   { icon: <Music />, label: 'Audio' },
   { icon: <Type />, label: 'Text' },
   { icon: <ClipboardType />, label: 'Subtitles' },
-  { icon: <Sparkles />, label: 'Effect' },
 ];
 
 interface SidenavProps {
@@ -46,7 +44,7 @@ const Sidenav: React.FC<SidenavProps> = ({ onSelect,selected }) => {
            onMouseEnter={() => setHovered(item.label)}
            onMouseLeave={() => setHovered(null)}
            animate={{
-             scale: hovered === item.label ? 1.2 : 1, // Only hovered item grows
+             scale: hovered === item.label ? 1.2 : 1, 
            }}
            transition={{
              type: "spring",
